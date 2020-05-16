@@ -51,7 +51,6 @@ spec:
           name: zookeeper
           ports:
             - containerPort: 2181
-              hostPort: 2181
               name: 2181tcp21810
               protocol: TCP
             - containerPort: 2888
@@ -59,9 +58,6 @@ spec:
               protocol: TCP
             - containerPort: 3888
               name: 3888tcp01
-              protocol: TCP
-            - containerPort: 8080
-              name: 8080tcp01
               protocol: TCP
           resources: {}
           terminationMessagePath: /dev/termination-log

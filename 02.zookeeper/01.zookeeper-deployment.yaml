@@ -49,7 +49,6 @@ spec:
           name: zookeeper
           ports:
             - containerPort: 2181
-              hostPort: 2181
               name: 2181tcp21810
               protocol: TCP
             - containerPort: 2888
@@ -102,10 +101,6 @@ spec:
       port: 3888
       protocol: TCP
       targetPort: 3888
-    - name: 8080tcp01-zookeeper
-      port: 8080
-      protocol: TCP
-      targetPort: 8080
   selector:
     workload.user.cattle.io/workloadselector: deployment-kafka-zookeeper
   sessionAffinity: None
