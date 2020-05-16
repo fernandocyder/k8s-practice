@@ -6,28 +6,43 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
-  name: zookeeper
+  name: zookeeper-headless
   namespace: kafka
   labels:
     app: zookeeper
 spec:
   ports:
-    - name: 2181tcp01-zookeeper
-      port: 2181
-      protocol: TCP
-      targetPort: 2181
-    - name: 2888tcp01-zookeeper
-      port: 2888
-      protocol: TCP
-      targetPort: 2888
-    - name: 3888tcp01-zookeeper
-      port: 3888
-      protocol: TCP
-      targetPort: 3888
-  sessionAffinity: None
-  type: ClusterIP
+    - port: 2888
+      name: server
+    - port: 3888
+      name: leader-election
+  clusterIP: None
   selector:
     app: zookeeper
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper-service
+  namespace: kafka
+  labels:
+    app: zookeeper
+spec:
+  ports:
+    - port: 2181
+      name: client
+  selector:
+    app: zookeeper
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: zookeeper-pdb
+spec:
+  selector:
+    matchLabels:
+      app: zookeeper
+  maxUnavailable: 1
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -35,8 +50,11 @@ metadata:
   name: zookeeper
   namespace: kafka
 spec:
-  serviceName: "zookeeper"
-  replicas: 1
+  serviceName: zookeeper-headless
+  replicas: 3
+  updateStrategy:
+    type: RollingUpdate
+  podManagementPolicy: OrderedReady
   selector:
     matchLabels:
       app: zookeeper
@@ -51,14 +69,11 @@ spec:
           name: zookeeper
           ports:
             - containerPort: 2181
-              name: 2181tcp21810
-              protocol: TCP
+              name: client
             - containerPort: 2888
-              name: 2888tcp01
-              protocol: TCP
+              name: server
             - containerPort: 3888
-              name: 3888tcp01
-              protocol: TCP
+              name: leader-election
           resources: {}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
