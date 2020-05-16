@@ -1,0 +1,114 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kafka-zookeeper-data
+  namespace: gel-stream
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kafka-zookeeper-log
+  namespace: gel-stream
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper
+  namespace: gel-stream
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      workload.user.cattle.io/workloadselector: deployment-kafka-zookeeper
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        workload.user.cattle.io/workloadselector: deployment-kafka-zookeeper
+    spec:
+      containers:
+        - image: zookeeper
+          imagePullPolicy: Always
+          name: zookeeper
+          ports:
+            - containerPort: 2181
+              hostPort: 2181
+              name: 2181tcp21810
+              protocol: TCP
+            - containerPort: 2888
+              name: 2888tcp01
+              protocol: TCP
+            - containerPort: 3888
+              name: 3888tcp01
+              protocol: TCP
+            - containerPort: 8080
+              name: 8080tcp01
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /data
+              name: data
+            - mountPath: /datalog
+              name: datalog
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: kafka-zookeeper-data
+        - name: datalog
+          persistentVolumeClaim:
+            claimName: kafka-zookeeper-log
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    field.cattle.io/targetWorkloadIds: '["deployment:kafka:zookeeper"]'
+  namespace: gel-stream
+  name: zookeeper
+spec:
+  ports:
+    - name: 2181tcp01-zookeeper
+      port: 2181
+      protocol: TCP
+      targetPort: 2181
+    - name: 2888tcp01-zookeeper
+      port: 2888
+      protocol: TCP
+      targetPort: 2888
+    - name: 3888tcp01-zookeeper
+      port: 3888
+      protocol: TCP
+      targetPort: 3888
+    - name: 8080tcp01-zookeeper
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    workload.user.cattle.io/workloadselector: deployment-kafka-zookeeper
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
