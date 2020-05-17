@@ -4,6 +4,17 @@ metadata:
   name: kafka
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zookeeper-config
+  namespace: kafka
+data:
+  ZOO_DATA_LOG_DIR: "/datalog"
+  ZOO_LOG_DIR: "/data"
+  ZOO_CONF_DIR: "/conf"
+  ZOO_SERVERS: "server.1=zookeeper-0.zookeeper:2888:3888;2181 server.2=zookeeper-1.zookeeper:2888:3888;2181 server.3=zookeeper-2.zookeeper:2888:3888;2181"
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: zookeeper
@@ -51,6 +62,32 @@ spec:
       labels:
         app: zookeeper
     spec:
+      initContainers:
+        - command:
+            - /bin/bash
+            - -c
+            - |-
+              set -ex;
+              mkdir -p "$ZOO_DATA_LOG_DIR" "$ZOO_DATA_DIR" "$ZOO_CONF_DIR";
+              chown -R zookeeper "$ZOO_DATA_DIR" "$ZOO_DATA_LOG_DIR" "$ZOO_LOG_DIR" "$ZOO_CONF_DIR"
+              if [[ ! -f "$ZOO_DATA_DIR/myid" ]]; then
+                IDX="$(echo $HOSTNAME| rev | cut -d "-" -f1 | rev)"
+                SVR_INDEX=$((IDX+1))
+                echo $SVR_INDEX > "$ZOO_DATA_DIR/myid"
+              fi
+          env:
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          image: busybox:1.28
+          imagePullPolicy: IfNotPresent
+          name: zookeeper-init
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /data
+              name: data
       containers:
         - image: zookeeper
           imagePullPolicy: Always
