@@ -80,6 +80,9 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+          envFrom:
+            - configMapRef:
+                name: zookeeper-config
           image: busybox:1.28
           imagePullPolicy: IfNotPresent
           name: zookeeper-init
@@ -100,6 +103,9 @@ spec:
             - containerPort: 3888
               name: leader-election
           resources: {}
+          envFrom:
+            - configMapRef:
+                name: zookeeper-config
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           volumeMounts:
