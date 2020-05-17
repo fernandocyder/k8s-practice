@@ -69,7 +69,6 @@ spec:
             - |-
               set -ex;
               mkdir -p "$ZOO_DATA_LOG_DIR" "$ZOO_DATA_DIR" "$ZOO_CONF_DIR";
-              chown -R zookeeper "$ZOO_DATA_DIR" "$ZOO_DATA_LOG_DIR" "$ZOO_LOG_DIR" "$ZOO_CONF_DIR"
               if [[ ! -f "$ZOO_DATA_DIR/myid" ]]; then
                 IDX="$(echo $HOSTNAME| rev | cut -d "-" -f1 | rev)"
                 SVR_INDEX=$((IDX+1))
