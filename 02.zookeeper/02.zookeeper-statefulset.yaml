@@ -33,6 +33,21 @@ spec:
   selector:
     app: zookeeper
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper-service
+  namespace: kafka
+  labels:
+    app: zookeeper
+spec:
+  ports:
+    - port: 2181
+      name: client
+  type: ClusterIP
+  selector:
+    app: zookeeper
+---
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
