@@ -38,7 +38,7 @@ metadata:
   name: zookeeper
   namespace: kafka
 spec:
-  serviceName: zookeeper-headless
+  serviceName: zookeeper
   replicas: 3
   updateStrategy:
     type: RollingUpdate
