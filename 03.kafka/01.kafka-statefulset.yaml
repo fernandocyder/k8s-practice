@@ -58,7 +58,7 @@ spec:
         app: kafka
     spec:
       containers:
-        - image: fernandokarnagi/kafka-server:v1
+        - image: fernandokarnagi/kafka-server:v2
           imagePullPolicy: Always
           name: kafka
           ports:
