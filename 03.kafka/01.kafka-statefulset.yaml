@@ -6,123 +6,81 @@ metadata:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: zookeeper-config
+  name: kafka-config
   namespace: kafka
 data:
-  ZOO_DATA_LOG_DIR: "/datalog"
-  ZOO_DATA_DIR: "/data"
-  ZOO_CONF_DIR: "/conf"
-  ZOO_SERVERS: "server.1=zookeeper-0.zookeeper:2888:3888;2181 server.2=zookeeper-1.zookeeper:2888:3888;2181 server.3=zookeeper-2.zookeeper:2888:3888;2181"
+  CONF_DIR: "/opt"
+  LOG_DIRS: "/kafka-logs"
+  ADVERTISED_LISTERNERS: "broker.kafka.cyder.com.sg:9092"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: zookeeper
+  name: kafka-service
   namespace: kafka
   labels:
-    app: zookeeper
+    app: kafka
 spec:
   ports:
-    - port: 2888
-      name: server
-    - port: 3888
-      name: leader-election
-    - port: 2181
+    - port: 9092
+      name: client
+  type: ClusterIP
+  selector:
+    app: kafka
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+  namespace: kafka
+  labels:
+    app: kafka
+spec:
+  ports:
+    - port: 9092
       name: client
   clusterIP: None
   selector:
-    app: zookeeper
----
-apiVersion: policy/v1beta1
-kind: PodDisruptionBudget
-metadata:
-  name: zookeeper-pdb
-spec:
-  selector:
-    matchLabels:
-      app: zookeeper
-  maxUnavailable: 1
+    app: kafka
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: zookeeper
+  name: kafka
   namespace: kafka
 spec:
-  serviceName: zookeeper
+  serviceName: kafka
   replicas: 3
   updateStrategy:
     type: RollingUpdate
   podManagementPolicy: OrderedReady
   selector:
     matchLabels:
-      app: zookeeper
+      app: kafka
   template:
     metadata:
       labels:
-        app: zookeeper
+        app: kafka
     spec:
-      initContainers:
-        - command:
-            - /bin/sh
-            - -c
-            - |-
-              set -ex;
-              mkdir -p "$ZOO_DATA_LOG_DIR" "$ZOO_DATA_DIR" "$ZOO_CONF_DIR";
-              if [[ ! -f "$ZOO_DATA_DIR/myid" ]]; then
-                IDX="$(echo $HOSTNAME| rev | cut -d "-" -f1 | rev)"
-                SVR_INDEX=$((IDX+1))
-                echo $SVR_INDEX > "$ZOO_DATA_DIR/myid"
-              fi
-          env:
-            - name: HOSTNAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-          envFrom:
-            - configMapRef:
-                name: zookeeper-config
-          image: busybox:1.28
-          imagePullPolicy: IfNotPresent
-          name: zookeeper-init
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
-            - mountPath: /data
-              name: data
       containers:
-        - image: zookeeper
+        - image: fernandokarnagi/kafka-server:v1
           imagePullPolicy: Always
-          name: zookeeper
+          name: kafka
           ports:
-            - containerPort: 2181
+            - containerPort: 9092
               name: client
-            - containerPort: 2888
-              name: server
-            - containerPort: 3888
-              name: leader-election
           resources: {}
           envFrom:
             - configMapRef:
-                name: zookeeper-config
+                name: kafka-config
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           volumeMounts:
-            - mountPath: /data
+            - mountPath: /kafka-logs
               name: data
-            - mountPath: /datalog
-              name: datalog
   volumeClaimTemplates:
     - metadata:
         name: data
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        storageClassName: local-path
-        resources:
-          requests:
-            storage: 100Mi
-    - metadata:
-        name: datalog
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: local-path
