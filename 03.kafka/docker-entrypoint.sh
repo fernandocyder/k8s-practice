@@ -11,7 +11,7 @@ if [[ ! -f "$CONF_DIR/server.properties" ]]; then
     {
         echo "broker.id=$SVR_INDEX" 
         echo "listeners=PLAINTEXT://0.0.0.0:9092"
-        echo "advertised.listeners=PLAINTEXT://$ADVERTISED_LISTERNERS"
+        # echo "advertised.listeners=PLAINTEXT://$ADVERTISED_LISTERNERS"
         echo "num.network.threads=3"
         echo "num.io.threads=8"
         echo "socket.send.buffer.bytes=102400"
