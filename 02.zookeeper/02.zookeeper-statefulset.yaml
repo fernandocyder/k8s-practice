@@ -6,7 +6,7 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
-  name: zookeeper-headless
+  name: zookeeper
   namespace: kafka
   labels:
     app: zookeeper
@@ -16,21 +16,9 @@ spec:
       name: server
     - port: 3888
       name: leader-election
-  clusterIP: None
-  selector:
-    app: zookeeper
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: zookeeper-service
-  namespace: kafka
-  labels:
-    app: zookeeper
-spec:
-  ports:
     - port: 2181
       name: client
+  clusterIP: None
   selector:
     app: zookeeper
 ---
