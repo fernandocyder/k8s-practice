@@ -25,7 +25,7 @@ metadata:
   namespace: nginx
 spec:
   serviceName: "nginx"
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: nginx
