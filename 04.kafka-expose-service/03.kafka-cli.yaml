@@ -5,7 +5,7 @@ metadata:
   namespace: kafka
 spec:
   containers:
-    - image: fernandokarnagi/kafka-cli:v1
+    - image: fernandokarnagi/kafka-cli:v2
       imagePullPolicy: Always
       name: kafka-cli
       command: ["/bin/bash", "-ec", "while :; do echo '.'; sleep 5 ; done"]
