@@ -7,7 +7,7 @@ data:
   CONF_DIR: "/opt"
   LOG_DIRS: "/kafka-logs"
   ADVERTISED_LISTERNERS: "kafka.kafka:9092"
-  ZOOKEEPER: "zookeeper-service.kafka.svc"
+  ZOOKEEPER: "zookeeper-0.zookeeper:2181,zookeeper-1.zookeeper:2181,zookeeper-2.zookeeper:2181"
 ---
 apiVersion: v1
 kind: Service
@@ -59,7 +59,7 @@ spec:
         app: kafka
     spec:
       containers:
-        - image: fernandokarnagi/kafka-server:v4
+        - image: fernandokarnagi/kafka-server:v6
           imagePullPolicy: Always
           name: kafka
           ports:
