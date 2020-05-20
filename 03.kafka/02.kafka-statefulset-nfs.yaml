@@ -7,6 +7,7 @@ data:
   CONF_DIR: "/opt"
   LOG_DIRS: "/kafka-logs"
   ADVERTISED_LISTERNERS: "broker.kafka.cyder.com.sg:9092"
+  ZOOKEEPER: "zookeeper-service.kafka.svc"
 ---
 apiVersion: v1
 kind: Service
@@ -58,7 +59,7 @@ spec:
         app: kafka
     spec:
       containers:
-        - image: fernandokarnagi/kafka-server:v3
+        - image: fernandokarnagi/kafka-server:v4
           imagePullPolicy: Always
           name: kafka
           ports:
