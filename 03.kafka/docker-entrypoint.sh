@@ -26,7 +26,7 @@ if [[ ! -f "$CONF_DIR/server.properties" ]]; then
         echo "log.retention.hours=168"
         echo "log.segment.bytes=1073741824"
         echo "log.retention.check.interval.ms=300000"
-        echo "zookeeper.connect=zookeeper-service:2181"
+        echo "zookeeper.connect=$ZOOKEEPER:2181"
         echo "zookeeper.connection.timeout.ms=6000"
         echo "group.initial.rebalance.delay.ms=0"
 
