@@ -1,25 +1,14 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Pod
 metadata:
   name: kafka-cli
   namespace: kafka
-spec: 
-  replicas: 1
-  selector:
-    matchLabels:
-      workload.user.cattle.io/workloadselector: deployment-kafka-cli
-  strategy:
-    type: Recreate
-  template:
-    metadata:
-      labels:
-        workload.user.cattle.io/workloadselector: deployment-kafka-cli
-    spec:
-      containers:
-        - image: fernandokarnagi/kafka-cli:v1
-          imagePullPolicy: Always
-          name: kafka-cli
-          command: ["/bin/bash", "-ec", "while :; do echo '.'; sleep 5 ; done"]
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      schedulerName: default-scheduler
+spec:
+  containers:
+    - image: fernandokarnagi/kafka-cli:v1
+      imagePullPolicy: Always
+      name: kafka-cli
+      command: ["/bin/bash", "-ec", "while :; do echo '.'; sleep 5 ; done"]
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+  schedulerName: default-scheduler

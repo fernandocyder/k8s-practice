@@ -15,6 +15,9 @@ RUN apt-get -y install software-properties-common
 # Install Java
 RUN apt -y install openjdk-8-jdk
 
+# Install Utility
+RUN apt-get -y install telnet
+
 # Define commonly used JAVA_HOME variable
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
