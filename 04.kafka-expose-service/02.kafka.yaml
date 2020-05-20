@@ -6,7 +6,7 @@ metadata:
 data:
   CONF_DIR: "/opt"
   LOG_DIRS: "/kafka-logs"
-  ADVERTISED_LISTERNERS: "broker.kafka.cyder.com.sg:9092"
+  ADVERTISED_LISTERNERS: "kafka.kafka:9092"
 ---
 apiVersion: v1
 kind: Service

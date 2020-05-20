@@ -19,6 +19,11 @@ spec:
         - image: fernandokarnagi/kafka-cli:v1
           imagePullPolicy: Always
           name: kafka-cli
+          args:
+            - kafka-cli
+            - kafka-console-producer.sh
+            - --broker-list kafka:9092
+            - --topic test
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
