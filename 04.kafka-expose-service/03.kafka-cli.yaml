@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-cli
+  namespace: kafka
+spec: 
+  replicas: 1
+  selector:
+    matchLabels:
+      workload.user.cattle.io/workloadselector: deployment-kafka-cli
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        workload.user.cattle.io/workloadselector: deployment-kafka-cli
+    spec:
+      containers:
+        - image: fernandokarnagi/kafka-cli:v1
+          imagePullPolicy: Always
+          name: kafka-cli
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
