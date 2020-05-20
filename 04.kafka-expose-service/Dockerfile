@@ -21,7 +21,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 RUN mkdir /app
 WORKDIR /app
 
-COPY ../03.kafka/kafka_2.12-2.5.0.tgz kafka.tgz
+COPY kafka_2.12-2.5.0.tgz kafka.tgz
 COPY docker-entrypoint.sh docker-entrypoint.sh
 
 RUN tar -xzf kafka.tgz
