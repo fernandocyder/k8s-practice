@@ -19,11 +19,7 @@ spec:
         - image: fernandokarnagi/kafka-cli:v1
           imagePullPolicy: Always
           name: kafka-cli
-          args:
-            - kafka-cli
-            - kafka-console-producer.sh
-            - --broker-list kafka-service:9092
-            - --topic test
+          command: ["/bin/bash", "-ec", "while :; do echo '.'; sleep 5 ; done"]
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
