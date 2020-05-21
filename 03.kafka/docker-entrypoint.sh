@@ -6,12 +6,15 @@ set -e
 if [[ ! -f "$CONF_DIR/server.properties" ]]; then
     IDX="$(echo $HOSTNAME| rev | cut -d "-" -f1 | rev)"
     SVR_INDEX=$((IDX+1))
+    PORT_INDEX=$((IDX+19092))
 
     CONFIG="$CONF_DIR/server.properties"
     {
-        echo "broker.id=$SVR_INDEX" 
-        echo "listeners=PLAINTEXT://0.0.0.0:9092"
-        echo "advertised.listeners=PLAINTEXT://$HOSTNAME.kafka:9092"
+        echo "broker.id=$SVR_INDEX"
+        echo "listeners=INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:$PORT_INDEX"
+        echo "advertised.listeners=INTERNAL://$HOSTNAME.kafka:9092"
+        echo "listener.security.protocol.map=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+        echo "inter.broker.listener.name=INTERNAL"
         echo "num.network.threads=3"
         echo "num.io.threads=8"
         echo "socket.send.buffer.bytes=102400"
