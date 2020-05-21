@@ -4,4 +4,7 @@ metadata:
   name: tcp-services
   namespace: ingress-nginx
 data:
-  3306: "kafka/kafka-service:9092"
+  "2181": kafka/zookeeper-service:2181
+  "19092": kafka/kafka-0-broker-service:19092
+  "19093": kafka/kafka-1-broker-service:19093
+  "19094": kafka/kafka-2-broker-service:19094

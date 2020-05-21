@@ -12,7 +12,7 @@ if [[ ! -f "$CONF_DIR/server.properties" ]]; then
     {
         echo "broker.id=$SVR_INDEX"
         echo "listeners=INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:$PORT_INDEX"
-        echo "advertised.listeners=INTERNAL://$HOSTNAME.kafka:9092"
+        echo "advertised.listeners=INTERNAL://$HOSTNAME.kafka:9092,EXTERNAL://broker.kafka.gel.cyder.com.sg:$PORT_INDEX,"
         echo "listener.security.protocol.map=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
         echo "inter.broker.listener.name=INTERNAL"
         echo "num.network.threads=3"
